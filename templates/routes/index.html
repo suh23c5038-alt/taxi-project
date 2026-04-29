@@ -1,0 +1,141 @@
+{% extends "layout.html" %}
+
+{% block body %}
+    <!-- رأس الصفحة -->
+    <div class="d-flex justify-content-between align-items-center mb-4 mt-2">
+        <h1 class="fw-bold m-0" style="font-weight: 800;">الرحلات المتاحة</h1>
+        <div class="badge bg-warning text-dark px-3 py-2 rounded-pill shadow-sm animate-pulse">
+            <i class="fas fa-clock me-1"></i> تحديث مباشر
+        </div>
+    </div>
+
+    <!-- قسم البحث الاحترافي -->
+    <form method="GET" action="{% url 'index' %}" class="mb-5">
+        <div class="input-group shadow-sm rounded-4 overflow-hidden border">
+            <span class="input-group-text bg-white border-0 ps-4">
+                <i class="fas fa-search text-muted"></i>
+            </span>
+            <input type="text" name="q" class="form-control border-0 p-3" placeholder="ابحث عن مدينة الانطلاق أو الوصول..." value="{{ query|default:'' }}">
+            <button class="btn btn-dark px-4 fw-bold" type="submit">بحث</button>
+        </div>
+    </form>
+
+    <!-- شبكة الرحلات -->
+    <div class="row">
+        {% for route in routes %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100 border-0 shadow-sm position-relative overflow-hidden">
+                    <!-- الشريط الأصفر الجانبي المميز لتكسي الأنبار -->
+                    <div class="position-absolute top-0 start-0 bottom-0 bg-warning" style="width: 6px;"></div>
+                    
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <span class="badge bg-dark rounded-pill px-3">رحلة #{{ route.id }}</span>
+                            <span class="text-muted small"><i class="far fa-clock me-1 text-warning"></i> {{ route.duration }} دقيقة</span>
+                        </div>
+
+                        <!-- مسار الرحلة البصري -->
+                        <div class="route-path mb-4 position-relative">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-success bg-opacity-10 p-2 rounded-circle me-3">
+                                    <i class="fas fa-circle text-success" style="font-size: 0.8rem;"></i>
+                                </div>
+                                <div>
+                                    <small class="text-muted d-block">من</small>
+                                    <h5 class="m-0 fw-bold">{{ route.origin.name }}</h5>
+                                </div>
+                            </div>
+                            
+                            <div class="ms-4 ps-2 border-start border-2 border-light my-1" style="height: 30px;"></div>
+                            
+                            <div class="d-flex align-items-center">
+                                <div class="bg-danger bg-opacity-10 p-2 rounded-circle me-3">
+                                    <i class="fas fa-map-marker-alt text-danger"></i>
+                                </div>
+                                <div>
+                                    <small class="text-muted d-block">إلى</small>
+                                    <h5 class="m-0 fw-bold">{{ route.destination.name }}</h5>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- معلومات السائق المضافة -->
+                        <div class="driver-card bg-light p-3 rounded-4 mb-4 border border-light">
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="bg-white p-2 rounded-3 shadow-sm me-2 text-center" style="width: 40px;">
+                                    <i class="fas fa-user-tie text-primary"></i>
+                                </div>
+                                <div>
+                                    <span class="small text-muted d-block" style="font-size: 0.7rem;">كابتن الرحلة</span>
+                                    <span class="fw-bold">{{ route.driver_name|default:"سائق متاح" }}</span>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <div class="bg-white p-2 rounded-3 shadow-sm me-2 text-center" style="width: 40px;">
+                                    <i class="fas fa-phone-alt text-success"></i>
+                                </div>
+                                <div>
+                                    <span class="small text-muted d-block" style="font-size: 0.7rem;">للتواصل الفوري</span>
+                                    <a href="tel:{{ route.driver_phone }}" class="text-decoration-none fw-bold text-dark">
+                                        {{ route.driver_phone|default:"07XXXXXXXX" }}
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- زر الإجراء الرئيسي -->
+                        <div class="d-grid">
+                            <a href="{% url 'route' route.id %}" class="btn btn-taxi shadow-sm py-3 fw-bold">
+                                <i class="fas fa-calendar-check me-2"></i> عرض وتأكيد الحجز
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <!-- واجهة عند عدم وجود رحلات -->
+            <div class="col-12 text-center py-5">
+                <div class="p-5 bg-white rounded-5 shadow-sm border border-light">
+                    <div class="bg-light d-inline-block p-4 rounded-circle mb-4">
+                        <i class="fas fa-search-location fa-4x text-muted opacity-50"></i>
+                    </div>
+                    <h3 class="fw-bold text-dark">عذراً، لا توجد رحلات حالياً</h3>
+                    <p class="text-muted">لم يتم العثور على أي مسار يطابق بحثك، جرب البحث عن مدينة أخرى.</p>
+                    <a href="{% url 'index' %}" class="btn btn-warning rounded-pill px-5 fw-bold mt-3">عرض جميع الرحلات</a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- تذييل إضافي لضمان ظهور الحقوق والمساحة في الموبايل -->
+    <div class="text-center mt-5 mb-5 pb-5">
+        <hr class="w-25 mx-auto opacity-25">
+        <p class="text-muted small">
+            <i class="fas fa-taxi me-1 text-warning"></i> 
+            نظام تكسي الأنبار الذكي © 2026
+        </p>
+    </div>
+
+    <style>
+        .animate-pulse {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.6; }
+            100% { opacity: 1; }
+        }
+        .btn-taxi {
+            background-color: #ffcc00;
+            color: #1a1a1a;
+            border: none;
+            transition: 0.3s;
+            border-radius: 12px;
+        }
+        .btn-taxi:hover {
+            background-color: #e6b800;
+            transform: scale(1.02);
+            color: #000;
+        }
+    </style>
+{% endblock %}

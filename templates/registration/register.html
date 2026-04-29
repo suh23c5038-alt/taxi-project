@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+
+{% block body %}
+    <!-- صفحة تسجيل الدخول -->
+    <div class="row justify-content-center pt-5">
+        <div class="col-md-5">
+            <div class="card shadow p-4 mb-5">
+                <h2 class="text-center mb-4">تسجيل الدخول</h2>
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-primary w-100 btn-lg">دخول</button>
+                </form>
+                <hr>
+                <p class="text-center">ليس لديك حساب؟ <a href="{% url 'register' %}">أنشئ حساباً جديداً هنا</a></p>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% comment %} 
+ملاحظة لك: الكود أدناه هو ما يجب أن تضعه في الملف الآخر المسمى register.html داخل نفس المجلد
+{% endcomment %}
+
+<!-- كود ملف register.html المخصص لإنشاء الحساب -->
+{% block register_content %}
+{% extends "layout.html" %}
+
+{% block body %}
+    <div class="row justify-content-center pt-5">
+        <div class="col-md-5">
+            <div class="card shadow p-4 border-success">
+                <h2 class="text-center mb-4 text-success">إنشاء حساب جديد</h2>
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-success w-100 btn-lg">تسجيل الحساب</button>
+                </form>
+                <hr>
+                <p class="text-center">لديك حساب بالفعل؟ <a href="{% url 'login' %}">سجل دخولك من هنا</a></p>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% endblock %}

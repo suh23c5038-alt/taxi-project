@@ -1,0 +1,48 @@
+{% extends "layout.html" %}
+
+{% block body %}
+    <div class="card shadow-lg mx-auto" style="max-width: 700px;">
+        <div class="card-header bg-primary text-white text-center py-3">
+            <h3 class="mb-0">تفاصيل الرحلة رقم {{ route.id }}</h3>
+        </div>
+        <div class="card-body p-4 text-center">
+            <div class="row mb-4">
+                <div class="col-5">
+                    <h5>من</h5>
+                    <h3>{{ route.origin.name }}</h3>
+                </div>
+                <div class="col-2 align-self-center"><h2>⬅</h2></div>
+                <div class="col-5">
+                    <h5>إلى</h5>
+                    <h3>{{ route.destination.name }}</h3>
+                </div>
+            </div>
+
+            <hr>
+            <h4>الركاب المسجلون:</h4>
+            <ul class="list-group mb-4">
+                {% for passenger in passengers %}
+                    <li class="list-group-item">{{ passenger.username }}</li>
+                {% empty %}
+                    <li class="list-group-item text-muted">لا يوجد ركاب حتى الآن.</li>
+                {% endfor %}
+            </ul>
+
+            {% if user.is_authenticated %}
+                {% if is_booked %}
+                    <form action="{% url 'unbook' route.id %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-lg w-100">إلغاء حجز مقعدي</button>
+                    </form>
+                {% else %}
+                    <form action="{% url 'book' route.id %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-success btn-lg w-100">حجز مقعد الآن</button>
+                    </form>
+                {% endif %}
+            {% else %}
+                <div class="alert alert-warning">يرجى تسجيل الدخول للتمكن من الحجز.</div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>تكسي الأنبار | الأمان والسرعة</title>
+    
+    <!-- Bootstrap CSS (RTL) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap');
+        
+        :root {
+            --taxi-yellow: #ffcc00;
+            --taxi-dark: #121212;
+            --taxi-gray: #f8f9fa;
+        }
+
+        body { 
+            font-family: 'Cairo', sans-serif; 
+            background-color: var(--taxi-gray);
+            color: var(--taxi-dark);
+            padding-bottom: 70px; /* مساحة لشريط التنقل السفلي */
+        }
+        
+        /* الهيدر العلوي */
+        .navbar {
+            background-color: var(--taxi-dark) !important;
+            border-bottom: 3px solid var(--taxi-yellow);
+            padding: 15px 0;
+        }
+        
+        .navbar-brand { 
+            font-weight: 800; 
+            color: var(--taxi-yellow) !important;
+            font-size: 1.5rem;
+        }
+
+        /* شريط التنقل السفلي (مثل التطبيقات الاحترافية) */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+            border-top: 1px solid #eee;
+        }
+
+        .bottom-nav-item {
+            text-decoration: none;
+            color: #888;
+            text-align: center;
+            font-size: 0.8rem;
+            transition: 0.3s;
+        }
+
+        .bottom-nav-item i {
+            display: block;
+            font-size: 1.2rem;
+            margin-bottom: 2px;
+        }
+
+        .bottom-nav-item.active {
+            color: var(--taxi-dark);
+            font-weight: bold;
+        }
+
+        .bottom-nav-item.active i {
+            color: var(--taxi-yellow);
+        }
+
+        /* البطاقات والجداول */
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .btn-taxi {
+            background-color: var(--taxi-yellow);
+            color: var(--taxi-dark);
+            font-weight: bold;
+            border-radius: 12px;
+            padding: 12px;
+            border: none;
+        }
+
+        .btn-taxi:hover {
+            background-color: #e6b800;
+        }
+
+        /* إخفاء القائمة العلوية في الموبايل واستبدالها بالسفلية */
+        @media (max-width: 991px) {
+            .navbar-nav { display: none; }
+        }
+        @media (min-width: 992px) {
+            .bottom-nav { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar العلوي -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'index' %}">
+                <i class="fas fa-taxi me-2"></i> تكسي الأنبار
+            </a>
+            <div class="navbar-nav ms-auto d-none d-lg-flex">
+                <a class="nav-link px-3" href="{% url 'index' %}">الرئيسية</a>
+                {% if user.is_authenticated %}
+                    <a class="nav-link px-3" href="{% url 'my_trips' %}">رحلاتي</a>
+                    <form action="{% url 'logout' %}" method="post" class="ms-2">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-outline-light rounded-pill">خروج</button>
+                    </form>
+                {% else %}
+                    <a class="nav-link px-3" href="{% url 'login' %}">دخول</a>
+                    <a class="btn btn-taxi ms-2" href="{% url 'register' %}">إنشاء حساب</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- شريط التنقل السفلي للهواتف -->
+    <div class="bottom-nav">
+        <a href="{% url 'index' %}" class="bottom-nav-item active">
+            <i class="fas fa-home"></i>
+            الرئيسية
+        </a>
+        {% if user.is_authenticated %}
+            <a href="{% url 'my_trips' %}" class="bottom-nav-item">
+                <i class="fas fa-map-marked-alt"></i>
+                رحلاتي
+            </a>
+            <a href="#" class="bottom-nav-item">
+                <i class="fas fa-user"></i>
+                حسابي
+            </a>
+        {% else %}
+            <a href="{% url 'login' %}" class="bottom-nav-item">
+                <i class="fas fa-sign-in-alt"></i>
+                دخول
+            </a>
+        {% endif %}
+    </div>
+
+    <!-- المحتوى -->
+    <main class="container mt-4">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-warning alert-dismissible fade show border-0 shadow-sm" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+        
+        {% block body %}
+        {% endblock %}
+    </main>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
